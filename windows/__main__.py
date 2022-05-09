@@ -89,8 +89,9 @@ def hesaplarabaglan():
     
     hesapno+=1
     #    return userbot
-
-def islemler(userbot):
+hedefgrup=""
+def islemler():
+    global hedefgrup
 #    if not calinacakgrup.startswith("@") and not calinacakgrup.startswith("http") and not calinacakgrup.startswith("t.me"):
 #        calinacakgrup = "@" + calinacakgrup
     
@@ -109,27 +110,33 @@ def islemler(userbot):
     logo()
     calinamayan=0
     calinan=0
+
+def userbot_islemleri(userbotz,calinacakgrup,hedefgrup):
     try:
         bilgi("Hesap koruması nedeniyle her 8 saniyede bir üye çekme isteğinde bulunacak..")
-        for member in mainuserbot.iter_chat_members(calinacakgrup):
+        for member in userbotz.iter_chat_members(calinacakgrup):
             try:
                 if member.user.is_bot:
                     passed("{} bot olduğu için geçiliyor!".format(member.user.username))
                     continue
-                mainuserbot.add_chat_members(hedefgrup, member.user.id)
+                userbotz.add_chat_members(hedefgrup, member.user.id)
                 basarili("{} gruba başarıyla eklendi!".format(member.user.first_name))
                 calinan= calinan + 1
             except Exception as e:
                 noadded("{} gruba eklenemedi! Hata:{}".format(member.user.first_name,str(e)))
-                calinamayan = calinamayan + 1
+                #calinamayan = calinamayan + 1
             sleep(8)
         console.clear()
         logo()
         basarili(f"İşlem Tamamlandı ! {hedefgrup} ögesine {calinacakgrup} ögesinden toplam {calinan} üye eklendi! ")
-        userbot.stop()
-        hata("Güle Güle !")
+        userbotz.stop()
     except Exception as e:
         hata(e)
+
+import logging
+
+LOGUKAPAT = logging.getLogger('apscheduler.executors.default')
+LOGUKAPAT.setLevel(logging.ERROR)
 
 if __name__ == "__main__":
     for i in range(25):
@@ -146,20 +153,23 @@ if __name__ == "__main__":
     except Exception as e:
         hata(e)
     a = True
-    while a:
-        try:
-            islemler(userbot)
-        except Exception as e:
-            onemli(e)
-        finally:
-            cevap= soru("Kod tekrar yürütülsün mü? (y/n)")
-            if cevap == "n":
-                a = False
-                userbot.stop()
-                hata("Güle Güle !")
-            else:
-                continue
-        
+    islemler()
+
+    from apscheduler.schedulers.background import BackgroundScheduler
+
+    scheduler = BackgroundScheduler()
+    scheduler.add_executor('processpool')
+    for ibot in Clients:
+        scheduler.add_job(userbot_islemleri, 'interval', args=[ibot,calinacakgrup,hedefgrup], seconds=10)
+    scheduler.start()
+    import time
+    try:
+        # This is here to simulate application activity (which keeps the main thread alive).
+        while True:
+            time.sleep(2)
+    except (KeyboardInterrupt, SystemExit):
+        # Not strictly necessary if daemonic mode is enabled but should be done if possible
+        scheduler.shutdown()
 
     
 
