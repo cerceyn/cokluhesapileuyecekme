@@ -27,5 +27,5 @@ if __name__ == "__main__":
             file.write(satir)
         ss = input("\n\n\n[!] Başka bir hesap için string almak ister misiniz ? (y/n)")
         if ss in ["y","Y"]:
-            print("Güle güle!)
+            print("Güle güle!")
             break
