@@ -22,7 +22,7 @@ def hesaplariolustur ():
     with open(dizin,"r") as file:
         dosya = file.read()
         dosya = dosya.split("\n")
-    for i in file:
+    for i in dosya:
         ii = i.split("|")
         
         stringsession=""
