@@ -137,7 +137,6 @@ if __name__ == "__main__":
     logo()
 
     hesaplariolustur()
-    global calinacakgrup
     hesaplarabaglan()
     onemli("Üye çalacağım grupta bulunmam ve çaldığım üyeleri eklediğim grupta yönetici olmam gerekir..")
     calinacakgrup = soru("Üye Çalınacak Grubun kullanıcı adı: (Hangi gruptan üyeleri çekeyim) ")
